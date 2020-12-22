@@ -5,16 +5,16 @@ function TasksTable(props) {
         <table className="table">
             <thead>
                 <tr>
-                    <th onClick={() => props.handleTextSort("todo")} scope="col">
+                    <th style={{ cursor: "pointer" }} onClick={() => props.handleTextSort("todo")} scope="col">
                         Summary {props.renderSortIcon("todo")}
                     </th>
-                    <th onClick={() => props.handleTextSort("priority")} scope="col">
+                    <th style={{ cursor: "pointer" }} onClick={() => props.handleTextSort("priority")} scope="col">
                         Priority {props.renderSortIcon("priority")}
                     </th>
-                    <th onClick={() => props.handleDateSort("createdDate")} scope="col">
+                    <th style={{ cursor: "pointer" }} onClick={() => props.handleDateSort("createdDate")} scope="col">
                         Created On {props.renderSortIcon("createdDate")}
                     </th>
-                    <th onClick={() => props.handleDateSort("dueDate")} scope="col">
+                    <th style={{ cursor: "pointer" }} onClick={() => props.handleDateSort("dueDate")} scope="col">
                         Due Date {props.renderSortIcon("dueDate")}
                     </th>
                     <th scope="col">Actions</th>

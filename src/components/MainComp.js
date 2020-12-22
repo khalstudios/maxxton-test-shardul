@@ -142,14 +142,12 @@ class MainComp extends Component {
     }
 
     handleDateSort = column => {
-        let sort = "none";
+        let sort = "asc";
         if (this.state.currentSortOrder === "asc") {
             sort = "desc";
         } else if (this.state.currentSortOrder === "desc") {
-            sort = "none";
-        } else {
             sort = "asc";
-        }
+        } 
         let list = [];
         if (sort === "asc") {
             list = [...this.state.currentList].sort((a, b) => {
@@ -168,20 +166,17 @@ class MainComp extends Component {
     }
 
     handleTextSort = column => {
-        let sort = "none";
+        let sort = "asc";
         if (this.state.currentSortOrder === "asc") {
             sort = "desc";
         } else if (this.state.currentSortOrder === "desc") {
-            sort = "none";
-        } else {
             sort = "asc";
-        }
+        } 
         let list = [];
         if (sort === "asc") {
             list = [...this.state.currentList].sort((a, b) => {
                 return (a[column].localeCompare(b[column]));
             });
-            console.log(list);
         } else if (sort === "desc") {
             list = [...this.state.currentList].sort((a, b) => {
                 return (b[column].localeCompare([column]));
@@ -277,7 +272,7 @@ class MainComp extends Component {
                                 position: 'absolute',
                                 margin: 'auto',
                                 width: '500px',
-                                height: '400px',
+                                height: '300px',
                                 border: '1px solid #ccc',
                                 padding: '20px'
                             }
