@@ -6,11 +6,8 @@ function SearchAndGroupBar(props) {
             <div className="col-md-3">
                 <div className="form-group">
                     <label className="form-label" style={{ float: "left" }} htmlFor="prioritySelect"><b>Group By</b></label>
-                    <select className="form-control" id="prioritySelect" value={props.priority} >
-                        <option value="none">None</option>
-                        <option value="low">Created On</option>
-                        <option value="medium">Pending On</option>
-                        <option value="high">Priority</option>
+                    <select className="form-control" id="prioritySelect" value={props.priority} onChange={() => ""}>
+                        <option value="none">Not Implemented Yet</option>
                     </select>
                 </div>
             </div>
