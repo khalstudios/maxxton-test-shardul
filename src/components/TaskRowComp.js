@@ -27,8 +27,8 @@ function TaskRowComp(props) {
 
     return (
         <tr>
-            <td style={{ cursor: "pointer" }} onClick={() => props.justDisplay(item)}
-                style={{ maxWidth: "150px", textAlign: "center" }}
+            <td onClick={() => props.justDisplay(item)}
+                style={{ maxWidth: "150px", textAlign: "center", cursor: "pointer" }}
             >
                 {item.status === "Completed" ? <del>{item.todo}</del> : item.todo}
             </td>

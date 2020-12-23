@@ -5,7 +5,7 @@ function TasksTable(props) {
         <table className="table">
             <thead>
                 <tr>
-                    <th style={{ cursor: "pointer" }} onClick={() => props.handleTextSort("todo")} scope="col">
+                    <th style={{ cursor: "pointer", maxWidth: "150px" }} onClick={() => props.handleTextSort("todo")} scope="col">
                         Summary {props.renderSortIcon("todo")}
                     </th>
                     <th style={{ cursor: "pointer" }} onClick={() => props.handleTextSort("priority")} scope="col">

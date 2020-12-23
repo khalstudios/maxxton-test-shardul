@@ -36,11 +36,9 @@ class MainComp extends Component {
             currentSortColumn: "createdDate",
             currentSortOrder: "none"
         }
-        this.setModal = this.setModal.bind(this);
-        this.addToDoItem = this.addToDoItem.bind(this);
     }
 
-    setModal(val) {
+    setModal = val => {
         if (val === false) {
             this.setState({
                 shouldDisable: false, modalAction: "new",
@@ -58,7 +56,7 @@ class MainComp extends Component {
         this.setState({ isModalOpen: val });
     }
 
-    filterTasks = (event) => {
+    filterTasks = event => {
         let list = this.state.todoList.filter((item) => item.todo.toLowerCase().includes(event.target.value.toLowerCase()));
         if (this.state.tabOpen !== "All") {
             list = list.filter((item) => item.status === this.state.tabOpen);
@@ -66,15 +64,18 @@ class MainComp extends Component {
         this.setState({ searchFilterText: event.target.value, currentList: list });
     }
 
-    addToDoItem(obj) {
+    addToDoItem = obj => {
         if (this.state.modalAction === "new") {
             this.setState((prevState) => {
                 let newList = [...prevState.todoList];
-                if (newList.length > 0) 
-                    newList.unshift(obj);
-                else
-                    newList.push(obj);
-                return ({ todoList: newList, currentList: newList, tabOpen: "All", isModalOpen: false });
+                newList.unshift(obj);
+                return ({
+                    todoList: newList,
+                    currentList: newList,
+                    tabOpen: "All",
+                    isModalOpen: false,
+                    currentSortOrder: "none"
+                });
             });
         } else {
             this.setState((prevState) => {
@@ -83,7 +84,23 @@ class MainComp extends Component {
                         item = { ...obj };
                     return item;
                 });
-                return { todoList: list, currentList: list, tabOpen: "All", isModalOpen: false, modalAction: "new" };
+                return ({
+                    todoList: list,
+                    currentList: list,
+                    focusedObj: {
+                        todo: "",
+                        summary: "",
+                        dueDate: "",
+                        priority: "none",
+                        status: "Pending",
+                        createdDate: new Date(),
+                        unique: 0
+                    },
+                    tabOpen: "All",
+                    isModalOpen: false,
+                    modalAction: "new",
+                    currentSortOrder: "none"
+                });
             });
         }
 
@@ -129,16 +146,28 @@ class MainComp extends Component {
     }
 
     markComplete = current => {
-        this.setState((prevState) => {
-            let list = prevState.todoList.map((item) => {
-                if (item.unique === current.unique) {
-                    item.status = "Completed";
-                    console.log(item.status);
-                }
-                return item;
-            });
-            return { todoList: list };
-        }, () => this.handleGrouping(this.state.tabOpen));
+        if (current.status === "Completed") {
+            this.setState((prevState) => {
+                let list = prevState.todoList.map((item) => {
+                    if (item.unique === current.unique) {
+                        item.status = "Pending";
+                    }
+                    return item;
+                });
+                return { todoList: list, currentSortOrder: "none" };
+            }, () => this.handleGrouping(this.state.tabOpen));
+        } else {
+            this.setState((prevState) => {
+                let list = prevState.todoList.map((item) => {
+                    if (item.unique === current.unique) {
+                        item.status = "Completed";
+                    }
+                    return item;
+                });
+                return { todoList: list, currentSortOrder: "none" };
+            }, () => this.handleGrouping(this.state.tabOpen));
+        }
+        
     }
 
     handleDateSort = column => {
@@ -147,13 +176,12 @@ class MainComp extends Component {
             sort = "desc";
         } else if (this.state.currentSortOrder === "desc") {
             sort = "asc";
-        } 
+        }
         let list = [];
         if (sort === "asc") {
             list = [...this.state.currentList].sort((a, b) => {
                 return (new Date(a[column]) - new Date(b[column]));
             });
-            console.log(list);
         } else if (sort === "desc") {
             list = [...this.state.currentList].sort((a, b) => {
                 return (new Date(b[column]) - new Date(a[column]));
@@ -171,18 +199,38 @@ class MainComp extends Component {
             sort = "desc";
         } else if (this.state.currentSortOrder === "desc") {
             sort = "asc";
-        } 
+        }
         let list = [];
-        if (sort === "asc") {
-            list = [...this.state.currentList].sort((a, b) => {
-                return (a[column].localeCompare(b[column]));
-            });
-        } else if (sort === "desc") {
-            list = [...this.state.currentList].sort((a, b) => {
-                return (b[column].localeCompare([column]));
-            });
+        if (column === "priority") {
+            let priObj = {
+                "none": 1,
+                "low": 2,
+                "medium": 3,
+                "high": 4
+            };
+            if (sort === "asc") {
+                list = [...this.state.currentList].sort((a, b) => {
+                    return (priObj[a.priority] - priObj[b.priority]);
+                });
+            } else if (sort === "desc") {
+                list = [...this.state.currentList].sort((a, b) => {
+                    return (priObj[b.priority] - priObj[a.priority]);
+                });
+            } else {
+                list = [...this.state.currentList];
+            }
         } else {
-            list = [...this.state.currentList];
+            if (sort === "asc") {
+                list = [...this.state.currentList].sort((a, b) => {
+                    return (a[column].localeCompare(b[column]));
+                });
+            } else if (sort === "desc") {
+                list = [...this.state.currentList].sort((a, b) => {
+                    return (b[column].localeCompare([column]));
+                });
+            } else {
+                list = [...this.state.currentList];
+            }
         }
 
         this.setState({ currentList: list, currentSortColumn: column, currentSortOrder: sort });
@@ -218,10 +266,10 @@ class MainComp extends Component {
 
         const displayTaskList = currentList.map((item) => {
             return (
-                <TaskRowComp 
+                <TaskRowComp
                     key={item.unique}
                     taskObject={item}
-                    handleDelete={this.handleDelete} 
+                    handleDelete={this.handleDelete}
                     markComplete={this.markComplete}
                     handleEdit={this.handleEdit}
                     justDisplay={this.justDisplay}
@@ -231,7 +279,7 @@ class MainComp extends Component {
 
         return (
 
-            <div className="container-md" 
+            <div className="container-md"
                 style={
                     {
                         padding: "40px 40px 40px 40px"
@@ -279,19 +327,19 @@ class MainComp extends Component {
                         }
                     }
                 >
-                    <DeletePopUp 
-                        handleNoForDelete={this.handleNoForDeletePopUp} 
-                        confirmDelete={this.confirmDelete} 
+                    <DeletePopUp
+                        handleNoForDelete={this.handleNoForDeletePopUp}
+                        confirmDelete={this.confirmDelete}
                         focusedObj={this.state.focusedObj}
                     />
                 </Modal>
                 <div className="row" style={{ marginTop: "20px" }}>
                     <NavTabs handleGrouping={this.handleGrouping} tabOpen={this.state.tabOpen} />
-                    <TasksTable 
+                    <TasksTable
                         handleDateSort={this.handleDateSort}
-                        handleTextSort={this.handleTextSort} 
-                        renderSortIcon={this.renderSortIcon} 
-                        displayTaskList={displayTaskList} 
+                        handleTextSort={this.handleTextSort}
+                        renderSortIcon={this.renderSortIcon}
+                        displayTaskList={displayTaskList}
                     />
                 </div>
             </div >

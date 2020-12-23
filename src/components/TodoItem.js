@@ -10,7 +10,6 @@ class TodoItem extends Component {
 
     constructToDoObj() {
         const errors = this.validate();
-        console.log(errors);
         if (errors) {
             this.setState({errors});
         } else {
@@ -24,7 +23,6 @@ class TodoItem extends Component {
 
     validate = () => {
         const { todo, summary, dueDate } = this.state;
-        console.log(summary);
         let errors = {};
         if (todo === "" || todo.length < 10)
             errors.todo = "Title is required and should be minimum of 10 characters.";
